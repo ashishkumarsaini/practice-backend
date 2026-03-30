@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-// const MONGO_URI = 'mongodb+srv://vishalkyp1998_db_user:sFEcR3yZwndZcM4m@cluster0.on4k3pl.mongodb.net/?appName=Cluster0'
-
 export const connectDatabase = async() => {
     const MONGO_URI = process.env.MONGO_URI;
 
