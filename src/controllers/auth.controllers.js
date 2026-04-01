@@ -1,6 +1,9 @@
 import { UserModel } from "../models/user.model.js";
+import { ApiError } from "../utils/api/api-error.js";
+import { ApiResponse } from "../utils/api/api-response.js";
+import { asyncHandler } from "../utils/async-handler/async-handler.js";
 
-export const registerHandler = async (request, response) => {
+export const registerHandler = asyncHandler(async (request, response) => {
     const userData = request.body; // request ki body    
 
     const {email, name, password, role} = userData;
@@ -9,9 +12,7 @@ export const registerHandler = async (request, response) => {
 
     // agr phle se koi user iss email ko use kr rha hai
     if(user){
-        return response.status(409).json({
-            message: "Email already exist. Please try with another email."
-        })
+        throw new ApiError(409, "Email already exist. Please try with another email.")
     }
 
     // UserModel.create se hum new user create krenge
@@ -19,16 +20,13 @@ export const registerHandler = async (request, response) => {
 
     if(!createdUser){
         // agr user create na ho paya toh
-        return response.status(422).json({
-            message: "Unable to create user."
-        });
+        throw new ApiError(422, "Unable to create user.")
     }
 
     // agr user create ho gaya toh response successfully with user data
-    response.status(201).json({
-        message: "User is created.",
-        data: {
-            user: createdUser
-        }
-    });
-};
+    response
+        .status(201)
+        .json(
+            new ApiResponse(201, "User is created.", {user: createdUser})
+        )
+});
