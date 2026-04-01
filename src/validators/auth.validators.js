@@ -25,4 +25,9 @@ export const registerValidator = [
     nameValidator,
     emailValidator,
     passwordValidator
-]
+];
+
+export const loginValidator = [
+    emailValidator,
+    passwordValidator
+];

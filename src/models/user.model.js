@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { generateBcryptHash, comparePassword } from '../utils/bcrypt/bcrypt.js';
+import jwt from 'jsonwebtoken';
 
 // format of User
 const userSchema = new mongoose.Schema({
@@ -27,9 +28,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['customer', 'admin'],
         default: 'customer'
-    },
-    refreshToken: {
-      type: String
     }
 }, {timestamps: true});
 
@@ -48,8 +46,18 @@ userSchema.pre('save', async function (next){
 });
 
 // ye ek method hai jiske andar hum password ko check krenge ki wo same hai ya nhi
-userSchema.method.isValidPassword = async function (providedPassword){
+userSchema.methods.isValidPassword = async function (providedPassword){
     return await comparePassword(this.password, providedPassword);
+}
+
+userSchema.methods.generateAccessToken = function(){
+    const payload = {
+        _id: this._id,
+        email: this.email,
+        name: this.name
+    }
+
+    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 }
 
 export const UserModel = mongoose.model('User', userSchema);
