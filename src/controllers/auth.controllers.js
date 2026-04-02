@@ -25,7 +25,7 @@ export const registerHandler = asyncHandler(async (request, response) => {
     response
         .status(201)
         .json(
-            new ApiResponse(201, "User is created.", {user: createdUser})
+            new ApiResponse(201, "User is created.", {user: createdUser.toJSON()})
         )
 });
 
@@ -53,7 +53,19 @@ export const loginHandler = asyncHandler(async (req, res) =>{
         secure: true
     })
     .json(
-        new ApiResponse(200, "Logged In Successfully.", {user: userFound})
+        new ApiResponse(200, "Logged in successfully.", {user: userFound.toJSON()})
     )
 });
 
+export const logoutHandler = asyncHandler(async (req, res) => {
+    const user = req.user;
+
+    if(!user){
+        throw new ApiError(401, "User not found.")
+    }
+
+    res
+    .status(200)
+    .clearCookie('accessToken')
+    .json(new ApiResponse(200, "Logged out successfully."));
+});

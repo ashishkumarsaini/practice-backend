@@ -60,4 +60,15 @@ userSchema.methods.generateAccessToken = function(){
     return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 }
 
+userSchema.methods.toJSON = function(){
+    const user = this;
+
+    const userObject = user.toObject();
+
+    delete userObject.password;
+    delete userObject.__v;
+
+    return userObject;
+}
+
 export const UserModel = mongoose.model('User', userSchema);
